@@ -19,6 +19,11 @@ import (
 
 const FENC = "fenc"
 
+var excludes = []string{
+	".DS_",
+	"._",
+}
+
 func gzcompress(path string) (string, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -82,7 +87,11 @@ func compress(tw *tar.Writer, file *os.File, prefix string) error {
 			return err
 		}
 		for _, fi := range fis {
-			f, err := os.Open(file.Name() + "/" + fi.Name())
+			fn := fi.Name()
+			if isExclude(fn) {
+				continue
+			}
+			f, err := os.Open(file.Name() + "/" + fn)
 			if err != nil {
 				return err
 			}
@@ -114,6 +123,15 @@ func mkfile(path string) (*os.File, error) {
 		return nil, err
 	}
 	return os.Create(path)
+}
+
+func isExclude(path string) bool {
+	for _, prefix := range excludes {
+		if strings.HasPrefix(path, prefix) {
+			return true
+		}
+	}
+	return false
 }
 
 func encFile(path, key string) (string, error) {
