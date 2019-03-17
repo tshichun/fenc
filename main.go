@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -13,10 +12,7 @@ func main() {
 		usage()
 		os.Exit(1)
 	}
-	var (
-		err error
-		key string
-	)
+	var err error
 	do := os.Args[1]
 	path := os.Args[2]
 
@@ -24,25 +20,8 @@ func main() {
 		path = strings.TrimSuffix(filepath.ToSlash(path), "/")
 	}
 	if do == "enc" {
-		var (
-			retype string
-			count  int
-		)
-		input := bufio.NewScanner(os.Stdin)
-		fmt.Printf("enter key: ")
-		for input.Scan() {
-			if count == 0 {
-				key = input.Text()
-				fmt.Printf("retype key: ")
-			} else if count == 1 {
-				retype = input.Text()
-			}
-			count++
-			if count == 2 {
-				break
-			}
-		}
-		if key == "" || key != retype {
+		key := passwd("enter key")
+		if key == "" || key != passwd("retype key") {
 			fmt.Println("keys don't match")
 			os.Exit(1)
 		}
@@ -50,12 +29,7 @@ func main() {
 		encTo, err = enc(path, key)
 		fmt.Printf("\nencrypted to: %s\n", encTo)
 	} else if do == "dec" {
-		input := bufio.NewScanner(os.Stdin)
-		fmt.Printf("enter key: ")
-		for input.Scan() {
-			key = input.Text()
-			break
-		}
+		key := passwd("enter key")
 		var decTo string
 		decTo, err = dec(path, key)
 		fmt.Printf("\ndecrypted to: %s\n", decTo)
