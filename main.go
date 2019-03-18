@@ -20,26 +20,33 @@ func main() {
 		path = strings.TrimSuffix(filepath.ToSlash(path), "/")
 	}
 	if do == "enc" {
-		key := passwd("enter key")
-		if key == "" || key != passwd("retype key") {
-			fmt.Println("keys don't match")
-			os.Exit(1)
+		var key string
+		for {
+			key = passwd("\nenter key")
+			if key == "" {
+				continue
+			}
+			if key != passwd("\nretype key") {
+				fmt.Println("\nkeys don't match")
+				continue
+			}
+			break
 		}
 		var encTo string
 		encTo, err = enc(path, key)
-		fmt.Printf("\nencrypted to: %s\n", encTo)
+		fmt.Printf("\nencrypted to: %s", encTo)
 	} else if do == "dec" {
-		key := passwd("enter key")
+		key := passwd("\nenter key")
 		var decTo string
 		decTo, err = dec(path, key)
-		fmt.Printf("\ndecrypted to: %s\n", decTo)
+		fmt.Printf("\ndecrypted to: %s", decTo)
 	} else {
 		usage()
 		os.Exit(1)
 	}
 
 	if err == nil {
-		fmt.Printf("Successful\n")
+		fmt.Printf("\nsuccessful\n")
 	} else {
 		fmt.Println(err)
 		os.Exit(1)

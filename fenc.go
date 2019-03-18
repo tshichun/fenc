@@ -114,7 +114,7 @@ func compress(tw *tar.Writer, file *os.File, prefix string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("compressed %s size %d\n", h.Name, n)
+	fmt.Printf("\ncompressed %s size %d", h.Name, n)
 	return nil
 }
 
@@ -179,7 +179,7 @@ func encFile(path, key string) (string, error) {
 		binary.BigEndian.PutUint32(head[fencLen:], uint32(len(body)))
 		fenc.Write(head)
 		fenc.Write(body)
-		fmt.Printf("encrypted %d/%d\n", sum, size)
+		fmt.Printf("\nencrypted %d/%d", sum, size)
 	}
 	return enc, nil
 }
@@ -238,7 +238,7 @@ func decFile(path, key string) (string, error) {
 			return gz, err
 		}
 		fgz.Write(body)
-		fmt.Printf("decrypted %d/%d\n", sum, size)
+		fmt.Printf("\ndecrypted %d/%d", sum, size)
 	}
 	return gz, nil
 }
